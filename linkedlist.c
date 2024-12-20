@@ -12,7 +12,7 @@ typedef Node *NodePtr;
 // Function Prototypes
 void prepend(int value, NodePtr *headNode, NodePtr *tailNode);
 void append(int value, NodePtr *headNode, NodePtr *tailNode);
-void removeLast(NodePtr *headNode);
+void removeLast(NodePtr *headNode,NodePtr *tailNode);
 void removeFirst(NodePtr *headNode);
 void printList(NodePtr headNode);
 void freeList(NodePtr *headNode);
@@ -28,7 +28,7 @@ int main(void) {
     append(3, &headNode, &tailNode);
     prepend(5, &headNode, &tailNode);
     append(7,&headNode, &tailNode);
-    removeLast(&headNode);
+    removeLast(&headNode, &tailNode);
     removeFirst(&headNode);
 
     // Print the linked list
@@ -41,70 +41,83 @@ int main(void) {
 }
 
 void removeFirst(NodePtr *headNode) {
-    NodePtr tempNode = (NodePtr)malloc(sizeof(Node));
-    tempNode = (*headNode)->next;
-    *headNode = NULL;
-    *headNode = tempNode;
+    if (*headNode == NULL)
+    {
+        puts("List is empty.");
+        return;
+    }
+    
+    NodePtr tempNode = *headNode;
+    *headNode = (*headNode)->next;
+    free(tempNode);
 }
 
-void removeLast(NodePtr *headNode) {
-    NodePtr currentNode = (NodePtr)malloc(sizeof(Node));
-    NodePtr prevNode = (NodePtr)malloc(sizeof(Node));
-    currentNode = (*headNode)->next;
-    prevNode = (*headNode);
-
-    if (currentNode == NULL)
+void removeLast(NodePtr *headNode, NodePtr *tailNode) {
+    if (*headNode == NULL)
     {
+        puts("List is empty.");
         return;
     }
 
-    while(currentNode->next != NULL) {
-        currentNode = currentNode->next;
-        prevNode = prevNode->next;
+    if ((*headNode)->next == NULL)
+    {
+        free(*headNode);
+        *headNode = NULL;
+        *tailNode = NULL;
+        return;
     }
 
-    currentNode = NULL;
+    NodePtr prevNode = NULL;
+    NodePtr currentNode = *headNode;
+
+    while(currentNode->next != NULL) {
+        prevNode = currentNode;
+        currentNode = currentNode->next;
+    }
+
+    free(currentNode);
     prevNode->next = NULL;
+    *tailNode = prevNode;
 }
 
 void append(int value, NodePtr *headNode, NodePtr *tailNode) {
-    NodePtr tempNode = (NodePtr)malloc(sizeof(Node));
-    if (tempNode == NULL) {
+    NodePtr newNode = malloc(sizeof(Node));
+    if (newNode == NULL) {
         printf("Memory allocation failed!\n");
         return;
     }
 
-    tempNode->value = value;
-    tempNode->next = NULL;
+    newNode->value = value;
+    newNode->next = NULL;
 
     if (*headNode == NULL) { // List is empty
-        *headNode = tempNode;
-        *tailNode = tempNode;
+        *headNode = newNode;
+        *tailNode = newNode;
     } else {
-        (*tailNode)->next = tempNode;
-        *tailNode = tempNode;
+        (*tailNode)->next = newNode;
+        *tailNode = newNode;
     }
 }
 
 void prepend(int value, NodePtr *headNode, NodePtr *tailNode) {
-    NodePtr tempNode = (NodePtr)malloc(sizeof(Node));
-    if (tempNode == NULL) {
+    NodePtr newNode  = malloc(sizeof(Node));
+    if (newNode  == NULL) {
         puts("Memory allocation failed!");
         return;
     }
 
-    tempNode->value = value;
-    tempNode->next = *headNode;
+    newNode ->value = value;
+    newNode ->next = *headNode;
 
-    *headNode = tempNode;
+    *headNode = newNode;
     if (*tailNode == NULL) { // If the list was empty
-        *tailNode = tempNode;
+        *tailNode = newNode;
     }
 }
 
 void printList(NodePtr headNode) {
     if (headNode == NULL) {
-        puts("Nothing to print");
+        puts("Nothing to print.");
         return;
     }
 
