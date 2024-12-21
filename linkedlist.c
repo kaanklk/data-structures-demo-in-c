@@ -83,7 +83,7 @@ void removeLast(NodePtr *headNode, NodePtr *tailNode) {
 void append(int value, NodePtr *headNode, NodePtr *tailNode) {
     NodePtr newNode = malloc(sizeof(Node));
     if (newNode == NULL) {
-        printf("Memory allocation failed!\n");
+        puts("Memory allocation failed!");
         return;
     }
 
