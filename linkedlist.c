@@ -17,7 +17,7 @@ struct linkedList {
 typedef struct linkedList LinkedList;
 typedef LinkedList *LinkedListPtr;
 
-// Function Prototypes
+/* Function Prototypes */ 
 LinkedListPtr initLinkedList();
 void prepend(int value, LinkedListPtr linkedList);
 void append(int value, LinkedListPtr linkedList);
@@ -30,7 +30,7 @@ int getListSize(LinkedListPtr linkedList);
 int main(void) {
     LinkedListPtr sampleLinkedList = initLinkedList();
 
-    // Insert values into the linked list
+    /* Insert values into the linked list */
     append(31, sampleLinkedList);
     append(69, sampleLinkedList);
     prepend(1, sampleLinkedList);
@@ -40,11 +40,11 @@ int main(void) {
     removeLast(sampleLinkedList);
     removeFirst(sampleLinkedList);
 
-    // Print the linked list
+    /* Print the linked list */
     printList(sampleLinkedList);
     printf("%s %d\n", "List size is:", getListSize(sampleLinkedList));
 
-    // Free the linked list memory
+    /* Free the linked list memory */
     freeList(sampleLinkedList);
     printf("%s %d\n", "List size is:", getListSize(sampleLinkedList));
 
@@ -133,7 +133,8 @@ void append(int value, LinkedListPtr linkedList) {
     newNode->value = value;
     newNode->next = NULL;
 
-    if (linkedList->head == NULL) { // List is empty
+    /* If the list was empty */
+    if (linkedList->head == NULL) {
         linkedList->head = newNode;
         linkedList->tail = newNode;
     } else {
@@ -153,7 +154,8 @@ void prepend(int value, LinkedListPtr linkedList) {
     newNode ->next = linkedList->head;
     linkedList->head = newNode;
 
-    if (linkedList->tail == NULL) { // If the list was empty
+    /* If the list was empty */
+    if (linkedList->tail == NULL) {
         linkedList->tail = newNode;
     }
 }
