@@ -9,66 +9,108 @@ struct node {
 typedef struct node Node;
 typedef Node *NodePtr;
 
+struct linkedList {
+    Node *head;
+    Node *tail;
+};
+
+typedef struct linkedList LinkedList;
+typedef LinkedList *LinkedListPtr;
+
 // Function Prototypes
-void prepend(int value, NodePtr *headNode, NodePtr *tailNode);
-void append(int value, NodePtr *headNode, NodePtr *tailNode);
-void removeLast(NodePtr *headNode,NodePtr *tailNode);
-void removeFirst(NodePtr *headNode);
-void printList(NodePtr headNode);
-void freeList(NodePtr *headNode);
+LinkedListPtr initLinkedList();
+void prepend(int value, LinkedListPtr linkedList);
+void append(int value, LinkedListPtr linkedList);
+void removeLast(LinkedListPtr linkedList);
+void removeFirst(LinkedListPtr linkedList);
+void printList(LinkedListPtr linkedList);
+void freeList(LinkedListPtr linkedList);
+int getListSize(LinkedListPtr linkedList);
 
 int main(void) {
-    NodePtr headNode = NULL;
-    NodePtr tailNode = NULL;
+    LinkedListPtr sampleLinkedList = initLinkedList();
 
     // Insert values into the linked list
-    append(31, &headNode, &tailNode);
-    append(69, &headNode, &tailNode);
-    prepend(1, &headNode, &tailNode);
-    append(3, &headNode, &tailNode);
-    prepend(5, &headNode, &tailNode);
-    append(7,&headNode, &tailNode);
-    removeLast(&headNode, &tailNode);
-    removeFirst(&headNode);
+    append(31, sampleLinkedList);
+    append(69, sampleLinkedList);
+    prepend(1, sampleLinkedList);
+    append(3, sampleLinkedList);
+    prepend(5, sampleLinkedList);
+    append(7, sampleLinkedList);
+    removeLast(sampleLinkedList);
+    removeFirst(sampleLinkedList);
 
     // Print the linked list
-    printList(headNode);
+    printList(sampleLinkedList);
+    printf("%s %d\n", "List size is:", getListSize(sampleLinkedList));
 
     // Free the linked list memory
-    freeList(&headNode);
+    freeList(sampleLinkedList);
+    printf("%s %d\n", "List size is:", getListSize(sampleLinkedList));
 
     return 0;
 }
 
-void removeFirst(NodePtr *headNode) {
-    if (*headNode == NULL)
+LinkedListPtr initLinkedList() {
+    LinkedListPtr newLinkedList = malloc(sizeof(LinkedList));
+    if (newLinkedList == NULL)
+    {
+        puts("Memory allocation failed!");
+        return NULL;
+    }
+    newLinkedList->head = NULL;
+    newLinkedList->tail = NULL;
+    return newLinkedList;
+}
+
+int getListSize(LinkedListPtr linkedList) {
+    int count = 0;
+    NodePtr tempNode = linkedList->head;
+
+    while (tempNode != NULL) {
+        count++;
+        tempNode = tempNode->next;
+    }
+
+    return count;
+}
+
+void removeFirst(LinkedListPtr linkedList) {
+    if (linkedList->head == NULL)
     {
         puts("List is empty.");
         return;
     }
     
-    NodePtr tempNode = *headNode;
-    *headNode = (*headNode)->next;
+    NodePtr tempNode = linkedList->head;
+    linkedList->head = linkedList->head->next;
+
+    if (linkedList->head == NULL)
+    {
+        linkedList->tail = NULL;
+    }
+
     free(tempNode);
 }
 
-void removeLast(NodePtr *headNode, NodePtr *tailNode) {
-    if (*headNode == NULL)
+void removeLast(LinkedListPtr linkedList) {
+
+    if (linkedList->head == NULL)
     {
         puts("List is empty.");
         return;
     }
 
-    if ((*headNode)->next == NULL)
+    if (linkedList->head == linkedList->tail)
     {
-        free(*headNode);
-        *headNode = NULL;
-        *tailNode = NULL;
+        free(linkedList->head);
+        linkedList->head = NULL;
+        linkedList->tail = NULL;
         return;
     }
 
     NodePtr prevNode = NULL;
-    NodePtr currentNode = *headNode;
+    NodePtr currentNode = linkedList->head;
 
     while(currentNode->next != NULL) {
         prevNode = currentNode;
@@ -77,11 +119,12 @@ void removeLast(NodePtr *headNode, NodePtr *tailNode) {
 
     free(currentNode);
     prevNode->next = NULL;
-    *tailNode = prevNode;
+    linkedList->tail = prevNode;
 }
 
-void append(int value, NodePtr *headNode, NodePtr *tailNode) {
+void append(int value, LinkedListPtr linkedList) {
     NodePtr newNode = malloc(sizeof(Node));
+
     if (newNode == NULL) {
         puts("Memory allocation failed!");
         return;
@@ -90,16 +133,16 @@ void append(int value, NodePtr *headNode, NodePtr *tailNode) {
     newNode->value = value;
     newNode->next = NULL;
 
-    if (*headNode == NULL) { // List is empty
-        *headNode = newNode;
-        *tailNode = newNode;
+    if (linkedList->head == NULL) { // List is empty
+        linkedList->head = newNode;
+        linkedList->tail = newNode;
     } else {
-        (*tailNode)->next = newNode;
-        *tailNode = newNode;
+        linkedList->tail->next = newNode;
+        linkedList->tail = newNode;
     }
 }
 
-void prepend(int value, NodePtr *headNode, NodePtr *tailNode) {
+void prepend(int value, LinkedListPtr linkedList) {
     NodePtr newNode  = malloc(sizeof(Node));
     if (newNode  == NULL) {
         puts("Memory allocation failed!");
@@ -107,29 +150,29 @@ void prepend(int value, NodePtr *headNode, NodePtr *tailNode) {
     }
 
     newNode ->value = value;
-    newNode ->next = *headNode;
+    newNode ->next = linkedList->head;
+    linkedList->head = newNode;
 
-    *headNode = newNode;
-    if (*tailNode == NULL) { // If the list was empty
-        *tailNode = newNode;
+    if (linkedList->tail == NULL) { // If the list was empty
+        linkedList->tail = newNode;
     }
 }
 
-void printList(NodePtr headNode) {
-    if (headNode == NULL) {
+void printList(LinkedListPtr linkedList) {
+    if (linkedList->head == NULL) {
         puts("Nothing to print.");
         return;
     }
 
-    NodePtr tempNode = headNode;
+    NodePtr tempNode = linkedList->head;
     while (tempNode != NULL) {
         printf("%d\n", tempNode->value);
         tempNode = tempNode->next;
     }
 }
 
-void freeList(NodePtr *headNode) {
-    NodePtr current = *headNode;
+void freeList(LinkedListPtr linkedList) {
+    NodePtr current = linkedList->head;
     NodePtr nextNode;
 
     while (current != NULL) {
@@ -138,5 +181,6 @@ void freeList(NodePtr *headNode) {
         current = nextNode;
     }
 
-    *headNode = NULL;
+    linkedList->head = NULL;
+    linkedList->tail = NULL;
 }
