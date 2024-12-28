@@ -17,9 +17,9 @@ int pop(NodePtr *headNode);
 int main(int argc, char const *argv[])
 {
     /* 
-        As the head node moves upwards when new element is pushed,
-        base stays still. When an element is pops, head moves downwards,
-        base stays silll until no elements are left in the stack.
+        The headNode pointer is updated to point to the new node when an element is pushed,
+        effectively moving "up" the stack. When an element is popped, headNode is updated 
+        to point to the previous node, moving "down" the stack.
     */
     NodePtr headNode = NULL;
 
